@@ -502,23 +502,8 @@ export default function App() {
                 <div style={s.allGood}><span style={{ fontSize: 32 }}>✓</span><p>All tracks are playable in {market}.</p></div>
               )}
 
-              {disabledTracks.filter((d) => replacements[d.track.id]).map((item) => (
-                <TrackCard
-                  key={item.track.id}
-                  item={item}
-                  matches={replacements[item.track.id]}
-                  selected={selectedReplacements[item.track.id]}
-                  onSelect={(uri) => setSelectedReplacements((p) => ({ ...p, [item.track.id]: uri }))}
-                  onDeselect={() => setSelectedReplacements((p) => { const n = { ...p }; delete n[item.track.id]; return n; })}
-                />
-              ))}
-
-              {disabledTracks.filter((d) => !replacements[d.track.id]).map((item) => (
-                <TrackCard key={item.track.id} item={item} matches={null} />
-              ))}
-
               {foundCount > 0 && !recoveryResult && (
-                <div style={{ marginTop: 24, textAlign: "center" }}>
+                <div style={{ marginBottom: 24, textAlign: "center" }}>
                   <button onClick={createRecoveryPlaylist} style={s.primaryBtn} disabled={status === STATUS.CREATING_PLAYLIST}>
                     {status === STATUS.CREATING_PLAYLIST ? "Creating..." : `Create Recovery Playlist (${Object.values(selectedReplacements).filter(Boolean).length} tracks)`}
                   </button>
@@ -534,6 +519,21 @@ export default function App() {
                   </div>
                 </div>
               )}
+
+              {disabledTracks.filter((d) => replacements[d.track.id]).map((item) => (
+                <TrackCard
+                  key={item.track.id}
+                  item={item}
+                  matches={replacements[item.track.id]}
+                  selected={selectedReplacements[item.track.id]}
+                  onSelect={(uri) => setSelectedReplacements((p) => ({ ...p, [item.track.id]: uri }))}
+                  onDeselect={() => setSelectedReplacements((p) => { const n = { ...p }; delete n[item.track.id]; return n; })}
+                />
+              ))}
+
+              {disabledTracks.filter((d) => !replacements[d.track.id]).map((item) => (
+                <TrackCard key={item.track.id} item={item} matches={null} />
+              ))}
             </div>
           )}
         </div>
