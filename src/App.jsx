@@ -128,7 +128,11 @@ function isSameTrack(a, b) {
 }
 
 function normalizeArtist(str) {
-  return str.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ").trim();
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 // ============================================================
@@ -185,10 +189,13 @@ export default function App() {
   useEffect(() => {
     if (token) {
       apiRef.current = new SpotifyAPI(token);
-      apiRef.current.getMe().then(setUser).catch(() => {
-        sessionStorage.removeItem("spotify_token");
-        setToken(null);
-      });
+      apiRef.current
+        .getMe()
+        .then(setUser)
+        .catch(() => {
+          sessionStorage.removeItem("spotify_token");
+          setToken(null);
+        });
     }
   }, [token]);
 
@@ -301,7 +308,9 @@ export default function App() {
           const matches = results.filter((r) => {
             if (!r.is_playable) return false;
             if (r.id === track.id) return false;
-            const artistMatch = r.artists?.some((a) => normalizeArtist(a.name) === normalizeArtist(artistName));
+            const artistMatch = r.artists?.some(
+              (a) => normalizeArtist(a.name) === normalizeArtist(artistName)
+            );
             const nameMatch = isSameTrack(r.name, trackName);
             return artistMatch && nameMatch;
           });
@@ -339,7 +348,11 @@ export default function App() {
       const desc = `Recovered ${uris.length} previously unavailable tracks from "${selectedPlaylist.name}"`;
       const newPl = await apiRef.current.createPlaylist(name, desc);
       await apiRef.current.addTracksToPlaylist(newPl.id, uris);
-      setRecoveryResult({ name: newPl.name, url: newPl.external_urls?.spotify, count: uris.length });
+      setRecoveryResult({
+        name: newPl.name,
+        url: newPl.external_urls?.spotify,
+        count: uris.length,
+      });
       setStatus(STATUS.DONE);
     } catch (e) {
       setError("Failed to create playlist: " + e.message);
@@ -363,9 +376,15 @@ export default function App() {
         <div style={s.headerLeft}>
           <div style={s.logoMark}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M3 14L10 3L17 14" stroke="#1DB954" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M6 9.5H14" stroke="#1DB954" strokeWidth="2" strokeLinecap="round"/>
-              <circle cx="10" cy="17" r="1.5" fill="#1DB954"/>
+              <path
+                d="M3 14L10 3L17 14"
+                stroke="#1DB954"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path d="M6 9.5H14" stroke="#1DB954" strokeWidth="2" strokeLinecap="round" />
+              <circle cx="10" cy="17" r="1.5" fill="#1DB954" />
             </svg>
           </div>
           <div>
@@ -376,7 +395,11 @@ export default function App() {
         {user && (
           <div style={s.headerRight}>
             <span style={s.userName}>{user.display_name}</span>
-            <select value={market} onChange={(e) => setMarket(e.target.value)} style={s.marketSelect}>
+            <select
+              value={market}
+              onChange={(e) => setMarket(e.target.value)}
+              style={s.marketSelect}
+            >
               <option value="HR">HR</option>
               <option value="US">US</option>
               <option value="GB">GB</option>
@@ -385,7 +408,9 @@ export default function App() {
               <option value="SI">SI</option>
               <option value="RS">RS</option>
             </select>
-            <button onClick={logout} style={s.logoutBtn}>Sign out</button>
+            <button onClick={logout} style={s.logoutBtn}>
+              Sign out
+            </button>
           </div>
         )}
       </div>
@@ -395,7 +420,9 @@ export default function App() {
         <div style={s.error}>
           <span style={s.errLabel}>ERR</span>
           <span style={{ flex: 1 }}>{error}</span>
-          <button onClick={() => setError(null)} style={s.dismissBtn}>✕</button>
+          <button onClick={() => setError(null)} style={s.dismissBtn}>
+            ✕
+          </button>
         </div>
       )}
 
@@ -403,14 +430,40 @@ export default function App() {
       {!token && (
         <div style={s.loginWrap}>
           <div style={s.loginCard}>
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{ marginBottom: 24 }}>
-              <circle cx="24" cy="24" r="22" stroke="rgba(29,185,84,0.3)" strokeWidth="1"/>
-              <path d="M15 30C15 30 18 26 24 26C30 26 33 30 33 30" stroke="#1DB954" strokeWidth="2.5" strokeLinecap="round"/>
-              <path d="M12 25C12 25 16 20 24 20C32 20 36 25 36 25" stroke="rgba(29,185,84,0.5)" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M9 20C9 20 14 14 24 14C34 14 39 20 39 20" stroke="rgba(29,185,84,0.3)" strokeWidth="1.5" strokeLinecap="round"/>
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 48 48"
+              fill="none"
+              style={{ marginBottom: 24 }}
+            >
+              <circle cx="24" cy="24" r="22" stroke="rgba(29,185,84,0.3)" strokeWidth="1" />
+              <path
+                d="M15 30C15 30 18 26 24 26C30 26 33 30 33 30"
+                stroke="#1DB954"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              <path
+                d="M12 25C12 25 16 20 24 20C32 20 36 25 36 25"
+                stroke="rgba(29,185,84,0.5)"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <path
+                d="M9 20C9 20 14 14 24 14C34 14 39 20 39 20"
+                stroke="rgba(29,185,84,0.3)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
             </svg>
-            <p style={s.loginText}>Connect your Spotify account to scan playlists for unavailable tracks and find playable replacements.</p>
-            <button onClick={login} style={s.loginBtn}>Connect to Spotify</button>
+            <p style={s.loginText}>
+              Connect your Spotify account to scan playlists for unavailable tracks and find
+              playable replacements.
+            </p>
+            <button onClick={login} style={s.loginBtn}>
+              Connect to Spotify
+            </button>
           </div>
         </div>
       )}
@@ -421,7 +474,9 @@ export default function App() {
           {/* Load playlists */}
           {playlists.length === 0 && status !== STATUS.LOADING_PLAYLISTS && (
             <div style={s.center}>
-              <button onClick={loadPlaylists} style={s.primaryBtn}>Load My Playlists</button>
+              <button onClick={loadPlaylists} style={s.primaryBtn}>
+                Load My Playlists
+              </button>
             </div>
           )}
 
@@ -452,13 +507,20 @@ export default function App() {
                     key={pl.id}
                     onClick={() => scanPlaylist(pl)}
                     style={s.plCard}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.07)"; e.currentTarget.style.borderColor = "rgba(29,185,84,0.4)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(255,255,255,0.07)";
+                      e.currentTarget.style.borderColor = "rgba(29,185,84,0.4)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                    }}
                   >
-                    {pl.images?.[0]?.url
-                      ? <img src={pl.images[0].url} alt="" style={s.plImg} />
-                      : <div style={s.plImgEmpty}>♫</div>
-                    }
+                    {pl.images?.[0]?.url ? (
+                      <img src={pl.images[0].url} alt="" style={s.plImg} />
+                    ) : (
+                      <div style={s.plImgEmpty}>♫</div>
+                    )}
                     <div style={s.plInfo}>
                       <span style={s.plName}>{pl.name}</span>
                       <span style={s.plMeta}>{pl.tracks?.total || 0} tracks</span>
@@ -472,17 +534,43 @@ export default function App() {
           {/* Scanning */}
           {selectedPlaylist && (status === STATUS.SCANNING || status === STATUS.SEARCHING) && (
             <div>
-              <button onClick={() => { abortRef.current = true; setSelectedPlaylist(null); setStatus(STATUS.IDLE); }} style={s.backBtn}>← Back</button>
-              <h2 style={{ ...s.sectionTitle, marginTop: 8, marginBottom: 20 }}>{selectedPlaylist.name}</h2>
+              <button
+                onClick={() => {
+                  abortRef.current = true;
+                  setSelectedPlaylist(null);
+                  setStatus(STATUS.IDLE);
+                }}
+                style={s.backBtn}
+              >
+                ← Back
+              </button>
+              <h2 style={{ ...s.sectionTitle, marginTop: 8, marginBottom: 20 }}>
+                {selectedPlaylist.name}
+              </h2>
               <div style={s.scanBox}>
                 <div style={s.barBg}>
-                  <div style={{ ...s.barFill, width: progress.total > 0 ? `${(progress.current / progress.total) * 100}%` : "0%" }} />
+                  <div
+                    style={{
+                      ...s.barFill,
+                      width:
+                        progress.total > 0 ? `${(progress.current / progress.total) * 100}%` : "0%",
+                    }}
+                  />
                 </div>
                 <p style={s.dimText}>
-                  {status === STATUS.SCANNING ? "Scanning for unavailable tracks..." : `Searching replacements ${progress.current}/${progress.total}`}
+                  {status === STATUS.SCANNING
+                    ? "Scanning for unavailable tracks..."
+                    : `Searching replacements ${progress.current}/${progress.total}`}
                 </p>
                 {progress.trackName && <p style={s.monoSmall}>{progress.trackName}</p>}
-                <button onClick={() => { abortRef.current = true; }} style={s.abortBtn}>Cancel</button>
+                <button
+                  onClick={() => {
+                    abortRef.current = true;
+                  }}
+                  style={s.abortBtn}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           )}
@@ -490,7 +578,15 @@ export default function App() {
           {/* Results */}
           {selectedPlaylist && status === STATUS.DONE && (
             <div>
-              <button onClick={() => { setSelectedPlaylist(null); setStatus(STATUS.IDLE); }} style={s.backBtn}>← Back to playlists</button>
+              <button
+                onClick={() => {
+                  setSelectedPlaylist(null);
+                  setStatus(STATUS.IDLE);
+                }}
+                style={s.backBtn}
+              >
+                ← Back to playlists
+              </button>
               <h2 style={{ ...s.sectionTitle, marginTop: 8 }}>{selectedPlaylist.name}</h2>
               <div style={s.statsRow}>
                 <StatBox label="Unavailable" value={disabledTracks.length} color="#ff4444" />
@@ -499,13 +595,22 @@ export default function App() {
               </div>
 
               {disabledTracks.length === 0 && (
-                <div style={s.allGood}><span style={{ fontSize: 32 }}>✓</span><p>All tracks are playable in {market}.</p></div>
+                <div style={s.allGood}>
+                  <span style={{ fontSize: 32 }}>✓</span>
+                  <p>All tracks are playable in {market}.</p>
+                </div>
               )}
 
               {foundCount > 0 && !recoveryResult && (
                 <div style={{ marginBottom: 24, textAlign: "center" }}>
-                  <button onClick={createRecoveryPlaylist} style={s.primaryBtn} disabled={status === STATUS.CREATING_PLAYLIST}>
-                    {status === STATUS.CREATING_PLAYLIST ? "Creating..." : `Create Recovery Playlist (${Object.values(selectedReplacements).filter(Boolean).length} tracks)`}
+                  <button
+                    onClick={createRecoveryPlaylist}
+                    style={s.primaryBtn}
+                    disabled={status === STATUS.CREATING_PLAYLIST}
+                  >
+                    {status === STATUS.CREATING_PLAYLIST
+                      ? "Creating..."
+                      : `Create Recovery Playlist (${Object.values(selectedReplacements).filter(Boolean).length} tracks)`}
                   </button>
                 </div>
               )}
@@ -514,26 +619,49 @@ export default function App() {
                 <div style={s.recoveryDone}>
                   <span style={{ color: "#1DB954", fontSize: 20 }}>✓</span>
                   <div>
-                    <p style={{ color: "#fff", fontWeight: 500 }}>Created "{recoveryResult.name}" — {recoveryResult.count} tracks</p>
-                    {recoveryResult.url && <a href={recoveryResult.url} target="_blank" rel="noopener noreferrer" style={s.link}>Open in Spotify →</a>}
+                    <p style={{ color: "#fff", fontWeight: 500 }}>
+                      Created "{recoveryResult.name}" — {recoveryResult.count} tracks
+                    </p>
+                    {recoveryResult.url && (
+                      <a
+                        href={recoveryResult.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={s.link}
+                      >
+                        Open in Spotify →
+                      </a>
+                    )}
                   </div>
                 </div>
               )}
 
-              {disabledTracks.filter((d) => replacements[d.track.id]).map((item) => (
-                <TrackCard
-                  key={item.track.id}
-                  item={item}
-                  matches={replacements[item.track.id]}
-                  selected={selectedReplacements[item.track.id]}
-                  onSelect={(uri) => setSelectedReplacements((p) => ({ ...p, [item.track.id]: uri }))}
-                  onDeselect={() => setSelectedReplacements((p) => { const n = { ...p }; delete n[item.track.id]; return n; })}
-                />
-              ))}
+              {disabledTracks
+                .filter((d) => replacements[d.track.id])
+                .map((item) => (
+                  <TrackCard
+                    key={item.track.id}
+                    item={item}
+                    matches={replacements[item.track.id]}
+                    selected={selectedReplacements[item.track.id]}
+                    onSelect={(uri) =>
+                      setSelectedReplacements((p) => ({ ...p, [item.track.id]: uri }))
+                    }
+                    onDeselect={() =>
+                      setSelectedReplacements((p) => {
+                        const n = { ...p };
+                        delete n[item.track.id];
+                        return n;
+                      })
+                    }
+                  />
+                ))}
 
-              {disabledTracks.filter((d) => !replacements[d.track.id]).map((item) => (
-                <TrackCard key={item.track.id} item={item} matches={null} />
-              ))}
+              {disabledTracks
+                .filter((d) => !replacements[d.track.id])
+                .map((item) => (
+                  <TrackCard key={item.track.id} item={item} matches={null} />
+                ))}
             </div>
           )}
         </div>
@@ -548,8 +676,22 @@ export default function App() {
 function StatBox({ label, value, color }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <span style={{ fontSize: 28, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color, letterSpacing: "-0.03em" }}>{value}</span>
-      <span style={{ fontSize: 11, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</span>
+      <span
+        style={{
+          fontSize: 28,
+          fontWeight: 700,
+          fontFamily: "'JetBrains Mono', monospace",
+          color,
+          letterSpacing: "-0.03em",
+        }}
+      >
+        {value}
+      </span>
+      <span
+        style={{ fontSize: 11, color: "#666", textTransform: "uppercase", letterSpacing: "0.06em" }}
+      >
+        {label}
+      </span>
     </div>
   );
 }
@@ -562,31 +704,68 @@ function TrackCard({ item, matches, selected, onSelect, onDeselect }) {
   return (
     <div style={s.trackCard}>
       <div style={s.trackRow}>
-        {albumImg ? <img src={albumImg} alt="" style={s.trackImg} /> : <div style={s.trackImgEmpty}>?</div>}
+        {albumImg ? (
+          <img src={albumImg} alt="" style={s.trackImg} />
+        ) : (
+          <div style={s.trackImgEmpty}>?</div>
+        )}
         <div style={s.trackInfo}>
           <span style={s.trackName}>{track.name}</span>
           <span style={s.trackArtist}>{track.artists?.map((a) => a.name).join(", ")}</span>
           <span style={s.monoSmall}>{track.album?.name}</span>
         </div>
-        <div style={{ ...s.tagBadge, background: hasMatch ? "rgba(29,185,84,0.15)" : "rgba(255,68,68,0.15)", color: hasMatch ? "#1DB954" : "#ff4444" }}>
+        <div
+          style={{
+            ...s.tagBadge,
+            background: hasMatch ? "rgba(29,185,84,0.15)" : "rgba(255,68,68,0.15)",
+            color: hasMatch ? "#1DB954" : "#ff4444",
+          }}
+        >
           {hasMatch ? "FOUND" : "NO MATCH"}
         </div>
       </div>
       {hasMatch && (
         <div style={s.matchSection}>
-          <span style={{ fontSize: 11, color: "#555", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Available versions:</span>
+          <span
+            style={{
+              fontSize: 11,
+              color: "#555",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              marginBottom: 4,
+            }}
+          >
+            Available versions:
+          </span>
           {matches.map((m) => {
             const isSel = selected === m.uri;
             return (
               <button
                 key={m.id}
-                onClick={() => isSel ? onDeselect?.() : onSelect?.(m.uri)}
-                style={{ ...s.matchBtn, borderColor: isSel ? "#1DB954" : "rgba(255,255,255,0.08)", background: isSel ? "rgba(29,185,84,0.1)" : "transparent" }}
+                onClick={() => (isSel ? onDeselect?.() : onSelect?.(m.uri))}
+                style={{
+                  ...s.matchBtn,
+                  borderColor: isSel ? "#1DB954" : "rgba(255,255,255,0.08)",
+                  background: isSel ? "rgba(29,185,84,0.1)" : "transparent",
+                }}
               >
                 <div style={s.radio}>{isSel && <div style={s.radioInner} />}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
-                  <span style={{ fontSize: 13, color: "#ddd", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m.name}</span>
-                  <span style={s.monoSmall}>{m.album?.name}{m.album?.release_date ? ` (${m.album.release_date.slice(0, 4)})` : ""}</span>
+                  <span
+                    style={{
+                      fontSize: 13,
+                      color: "#ddd",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {m.name}
+                  </span>
+                  <span style={s.monoSmall}>
+                    {m.album?.name}
+                    {m.album?.release_date ? ` (${m.album.release_date.slice(0, 4)})` : ""}
+                  </span>
                 </div>
               </button>
             );
@@ -601,68 +780,370 @@ function TrackCard({ item, matches, selected, onSelect, onDeselect }) {
 // Styles
 // ============================================================
 const s = {
-  container: { minHeight: "100vh", background: "#0a0a0a", color: "#e0e0e0", fontFamily: "'Outfit', -apple-system, sans-serif" },
-  header: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.4)", backdropFilter: "blur(20px)", position: "sticky", top: 0, zIndex: 100 },
+  container: {
+    minHeight: "100vh",
+    background: "#0a0a0a",
+    color: "#e0e0e0",
+    fontFamily: "'Outfit', -apple-system, sans-serif",
+  },
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "16px 24px",
+    borderBottom: "1px solid rgba(255,255,255,0.06)",
+    background: "rgba(0,0,0,0.4)",
+    backdropFilter: "blur(20px)",
+    position: "sticky",
+    top: 0,
+    zIndex: 100,
+  },
   headerLeft: { display: "flex", alignItems: "center", gap: 12 },
   headerRight: { display: "flex", alignItems: "center", gap: 12 },
-  logoMark: { width: 36, height: 36, borderRadius: 8, background: "rgba(29,185,84,0.1)", display: "flex", alignItems: "center", justifyContent: "center" },
+  logoMark: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    background: "rgba(29,185,84,0.1)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   title: { fontSize: 16, fontWeight: 600, color: "#fff", letterSpacing: "-0.02em" },
-  subtitle: { fontSize: 11, color: "#666", fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.03em" },
+  subtitle: {
+    fontSize: 11,
+    color: "#666",
+    fontFamily: "'JetBrains Mono', monospace",
+    letterSpacing: "0.03em",
+  },
   userName: { fontSize: 13, color: "#999" },
-  marketSelect: { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", padding: "4px 8px", borderRadius: 4, fontSize: 12, fontFamily: "'JetBrains Mono', monospace", cursor: "pointer", outline: "none" },
-  logoutBtn: { background: "none", border: "1px solid rgba(255,255,255,0.12)", color: "#999", padding: "5px 12px", borderRadius: 6, fontSize: 12, cursor: "pointer", fontFamily: "'Outfit', sans-serif" },
+  marketSelect: {
+    background: "rgba(255,255,255,0.06)",
+    border: "1px solid rgba(255,255,255,0.1)",
+    color: "#fff",
+    padding: "4px 8px",
+    borderRadius: 4,
+    fontSize: 12,
+    fontFamily: "'JetBrains Mono', monospace",
+    cursor: "pointer",
+    outline: "none",
+  },
+  logoutBtn: {
+    background: "none",
+    border: "1px solid rgba(255,255,255,0.12)",
+    color: "#999",
+    padding: "5px 12px",
+    borderRadius: 6,
+    fontSize: 12,
+    cursor: "pointer",
+    fontFamily: "'Outfit', sans-serif",
+  },
 
-  error: { display: "flex", alignItems: "center", gap: 10, padding: "10px 20px", background: "rgba(255,68,68,0.08)", borderBottom: "1px solid rgba(255,68,68,0.2)", color: "#ff6666", fontSize: 13 },
+  error: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "10px 20px",
+    background: "rgba(255,68,68,0.08)",
+    borderBottom: "1px solid rgba(255,68,68,0.2)",
+    color: "#ff6666",
+    fontSize: 13,
+  },
   errLabel: { fontFamily: "'JetBrains Mono', monospace", fontSize: 11 },
-  dismissBtn: { marginLeft: "auto", background: "none", border: "none", color: "#ff6666", cursor: "pointer", fontSize: 14, padding: "2px 6px" },
+  dismissBtn: {
+    marginLeft: "auto",
+    background: "none",
+    border: "none",
+    color: "#ff6666",
+    cursor: "pointer",
+    fontSize: 14,
+    padding: "2px 6px",
+  },
 
-  loginWrap: { display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh", padding: 24 },
-  loginCard: { maxWidth: 400, textAlign: "center", padding: 40, border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, background: "rgba(255,255,255,0.02)" },
+  loginWrap: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "80vh",
+    padding: 24,
+  },
+  loginCard: {
+    maxWidth: 400,
+    textAlign: "center",
+    padding: 40,
+    border: "1px solid rgba(255,255,255,0.06)",
+    borderRadius: 16,
+    background: "rgba(255,255,255,0.02)",
+  },
   loginText: { fontSize: 14, color: "#999", lineHeight: 1.6, marginBottom: 28 },
-  loginBtn: { background: "#1DB954", color: "#000", border: "none", padding: "12px 32px", borderRadius: 24, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Outfit', sans-serif" },
+  loginBtn: {
+    background: "#1DB954",
+    color: "#000",
+    border: "none",
+    padding: "12px 32px",
+    borderRadius: 24,
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontFamily: "'Outfit', sans-serif",
+  },
 
   main: { padding: 24, maxWidth: 800, margin: "0 auto" },
-  center: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", gap: 16 },
-  primaryBtn: { background: "#1DB954", color: "#000", border: "none", padding: "12px 28px", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Outfit', sans-serif" },
-  spinner: { width: 24, height: 24, border: "2px solid rgba(255,255,255,0.1)", borderTopColor: "#1DB954", borderRadius: "50%", animation: "spin 0.8s linear infinite" },
+  center: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "60vh",
+    gap: 16,
+  },
+  primaryBtn: {
+    background: "#1DB954",
+    color: "#000",
+    border: "none",
+    padding: "12px 28px",
+    borderRadius: 8,
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontFamily: "'Outfit', sans-serif",
+  },
+  spinner: {
+    width: 24,
+    height: 24,
+    border: "2px solid rgba(255,255,255,0.1)",
+    borderTopColor: "#1DB954",
+    borderRadius: "50%",
+    animation: "spin 0.8s linear infinite",
+  },
   dimText: { fontSize: 13, color: "#666" },
-  monoSmall: { fontSize: 11, color: "#555", fontFamily: "'JetBrains Mono', monospace", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
+  monoSmall: {
+    fontSize: 11,
+    color: "#555",
+    fontFamily: "'JetBrains Mono', monospace",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
 
   row: { display: "flex", alignItems: "center", gap: 10, marginBottom: 16 },
   sectionTitle: { fontSize: 18, fontWeight: 600, color: "#fff", letterSpacing: "-0.02em" },
-  badge: { fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#1DB954", background: "rgba(29,185,84,0.12)", padding: "2px 8px", borderRadius: 10 },
-  filterInput: { width: "100%", padding: "10px 14px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, color: "#fff", fontSize: 13, fontFamily: "'Outfit', sans-serif", outline: "none", marginBottom: 16 },
-  playlistList: { display: "flex", flexDirection: "column", gap: 2, maxHeight: "65vh", overflowY: "auto" },
-  plCard: { display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, cursor: "pointer", textAlign: "left", transition: "all 0.15s", width: "100%", fontFamily: "'Outfit', sans-serif", color: "inherit" },
+  badge: {
+    fontFamily: "'JetBrains Mono', monospace",
+    fontSize: 11,
+    color: "#1DB954",
+    background: "rgba(29,185,84,0.12)",
+    padding: "2px 8px",
+    borderRadius: 10,
+  },
+  filterInput: {
+    width: "100%",
+    padding: "10px 14px",
+    background: "rgba(255,255,255,0.04)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    borderRadius: 8,
+    color: "#fff",
+    fontSize: 13,
+    fontFamily: "'Outfit', sans-serif",
+    outline: "none",
+    marginBottom: 16,
+  },
+  playlistList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 2,
+    maxHeight: "65vh",
+    overflowY: "auto",
+  },
+  plCard: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    padding: "10px 12px",
+    background: "rgba(255,255,255,0.03)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    borderRadius: 8,
+    cursor: "pointer",
+    textAlign: "left",
+    transition: "all 0.15s",
+    width: "100%",
+    fontFamily: "'Outfit', sans-serif",
+    color: "inherit",
+  },
   plImg: { width: 44, height: 44, borderRadius: 4, objectFit: "cover", flexShrink: 0 },
-  plImgEmpty: { width: 44, height: 44, borderRadius: 4, background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", color: "#444", fontSize: 18, flexShrink: 0 },
+  plImgEmpty: {
+    width: 44,
+    height: 44,
+    borderRadius: 4,
+    background: "rgba(255,255,255,0.06)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#444",
+    fontSize: 18,
+    flexShrink: 0,
+  },
   plInfo: { display: "flex", flexDirection: "column", gap: 2, minWidth: 0 },
-  plName: { fontSize: 14, fontWeight: 500, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
+  plName: {
+    fontSize: 14,
+    fontWeight: 500,
+    color: "#fff",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
   plMeta: { fontSize: 12, color: "#666", fontFamily: "'JetBrains Mono', monospace" },
 
-  backBtn: { background: "none", border: "none", color: "#666", fontSize: 13, cursor: "pointer", padding: "4px 0", fontFamily: "'Outfit', sans-serif" },
-  scanBox: { background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: 24, textAlign: "center" },
-  barBg: { width: "100%", height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 2, overflow: "hidden", marginBottom: 16 },
-  barFill: { height: "100%", background: "#1DB954", borderRadius: 2, transition: "width 0.3s ease" },
-  abortBtn: { background: "none", border: "1px solid rgba(255,68,68,0.3)", color: "#ff6666", padding: "6px 16px", borderRadius: 6, fontSize: 12, cursor: "pointer", fontFamily: "'Outfit', sans-serif", marginTop: 12 },
+  backBtn: {
+    background: "none",
+    border: "none",
+    color: "#666",
+    fontSize: 13,
+    cursor: "pointer",
+    padding: "4px 0",
+    fontFamily: "'Outfit', sans-serif",
+  },
+  scanBox: {
+    background: "rgba(255,255,255,0.02)",
+    border: "1px solid rgba(255,255,255,0.06)",
+    borderRadius: 12,
+    padding: 24,
+    textAlign: "center",
+  },
+  barBg: {
+    width: "100%",
+    height: 4,
+    background: "rgba(255,255,255,0.06)",
+    borderRadius: 2,
+    overflow: "hidden",
+    marginBottom: 16,
+  },
+  barFill: {
+    height: "100%",
+    background: "#1DB954",
+    borderRadius: 2,
+    transition: "width 0.3s ease",
+  },
+  abortBtn: {
+    background: "none",
+    border: "1px solid rgba(255,68,68,0.3)",
+    color: "#ff6666",
+    padding: "6px 16px",
+    borderRadius: 6,
+    fontSize: 12,
+    cursor: "pointer",
+    fontFamily: "'Outfit', sans-serif",
+    marginTop: 12,
+  },
 
   statsRow: { display: "flex", gap: 24, margin: "16px 0 24px" },
-  allGood: { display: "flex", flexDirection: "column", alignItems: "center", gap: 12, padding: 48, color: "#1DB954", fontSize: 14 },
+  allGood: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 12,
+    padding: 48,
+    color: "#1DB954",
+    fontSize: 14,
+  },
 
-  trackCard: { background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, padding: 16, marginBottom: 8 },
+  trackCard: {
+    background: "rgba(255,255,255,0.02)",
+    border: "1px solid rgba(255,255,255,0.06)",
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 8,
+  },
   trackRow: { display: "flex", alignItems: "center", gap: 12 },
   trackImg: { width: 44, height: 44, borderRadius: 4, objectFit: "cover", flexShrink: 0 },
-  trackImgEmpty: { width: 44, height: 44, borderRadius: 4, background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", color: "#444", fontSize: 16, flexShrink: 0 },
+  trackImgEmpty: {
+    width: 44,
+    height: 44,
+    borderRadius: 4,
+    background: "rgba(255,255,255,0.06)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#444",
+    fontSize: 16,
+    flexShrink: 0,
+  },
   trackInfo: { display: "flex", flexDirection: "column", gap: 2, flex: 1, minWidth: 0 },
-  trackName: { fontSize: 14, fontWeight: 500, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
-  trackArtist: { fontSize: 12, color: "#999", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
-  tagBadge: { fontSize: 10, fontWeight: 600, fontFamily: "'JetBrains Mono', monospace", padding: "4px 8px", borderRadius: 4, letterSpacing: "0.05em", flexShrink: 0 },
+  trackName: {
+    fontSize: 14,
+    fontWeight: 500,
+    color: "#fff",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  trackArtist: {
+    fontSize: 12,
+    color: "#999",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  tagBadge: {
+    fontSize: 10,
+    fontWeight: 600,
+    fontFamily: "'JetBrains Mono', monospace",
+    padding: "4px 8px",
+    borderRadius: 4,
+    letterSpacing: "0.05em",
+    flexShrink: 0,
+  },
 
-  matchSection: { marginTop: 12, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.04)", display: "flex", flexDirection: "column", gap: 6 },
-  matchBtn: { display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, cursor: "pointer", background: "transparent", textAlign: "left", transition: "all 0.15s", fontFamily: "'Outfit', sans-serif", color: "inherit", width: "100%" },
-  radio: { width: 16, height: 16, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
+  matchSection: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTop: "1px solid rgba(255,255,255,0.04)",
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+  },
+  matchBtn: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "8px 12px",
+    border: "1px solid rgba(255,255,255,0.08)",
+    borderRadius: 6,
+    cursor: "pointer",
+    background: "transparent",
+    textAlign: "left",
+    transition: "all 0.15s",
+    fontFamily: "'Outfit', sans-serif",
+    color: "inherit",
+    width: "100%",
+  },
+  radio: {
+    width: 16,
+    height: 16,
+    borderRadius: "50%",
+    border: "2px solid rgba(255,255,255,0.2)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
   radioInner: { width: 8, height: 8, borderRadius: "50%", background: "#1DB954" },
 
-  recoveryDone: { display: "flex", alignItems: "center", gap: 12, padding: 20, background: "rgba(29,185,84,0.06)", border: "1px solid rgba(29,185,84,0.2)", borderRadius: 10, marginTop: 24 },
-  link: { color: "#1DB954", fontSize: 13, textDecoration: "none", marginTop: 4, display: "inline-block" },
+  recoveryDone: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    padding: 20,
+    background: "rgba(29,185,84,0.06)",
+    border: "1px solid rgba(29,185,84,0.2)",
+    borderRadius: 10,
+    marginTop: 24,
+  },
+  link: {
+    color: "#1DB954",
+    fontSize: 13,
+    textDecoration: "none",
+    marginTop: 4,
+    display: "inline-block",
+  },
 };
