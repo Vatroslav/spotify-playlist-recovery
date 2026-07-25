@@ -1,12 +1,13 @@
 #!/bin/bash
-# PreToolUse hook: block git commit if version not bumped
+# PreToolUse hook: intent-based bump guard.
+# Veze se na DEKLARIRANU NAMJERU (tip commita), ne na putanju fajla.
 
-CMD=$(python -c "import sys,json; print(json.load(sys.stdin)['tool_input']['command'])" 2>/dev/null)
+CMD=$(python -c "import sys,json; print(json.load(sys.stdin)['tool_input'].get('command',''))" 2>/dev/null)
 
-# Only care about git commit commands
+# Samo git commit komande
 echo "$CMD" | grep -qE 'git commit' || exit 0
 
-# Get staged files
+# Staged fileovi (+ fileovi dodani inline preko git add u istoj komandi)
 STAGED=$(git diff --cached --name-only)
 ADD_PART=$(echo "$CMD" | sed -n 's/.*git add \([^&]*\).*/\1/p')
 if [ -n "$ADD_PART" ]; then
@@ -14,14 +15,59 @@ if [ -n "$ADD_PART" ]; then
 $(echo "$ADD_PART" | tr ' ' '\n')"
 fi
 
-# Find the version file path
-VERSION_FILE="package.json"
+# Guard se aktivira samo ako su app source fileovi dirani
+echo "$STAGED" | grep -qE '^(src|public)/|^index\.html' || exit 0
 
-# Only care if source files are staged (not just docs/config outside source)
-echo "$STAGED" | grep -qE "^src/|^lib/|^app/" || exit 0
-
-# Check if version file is staged
-if ! echo "$STAGED" | grep -q "^${VERSION_FILE}$"; then
-    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Version not bumped! Update: %s"}}' "$VERSION_FILE"
+deny() {
+    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}' "$1"
     exit 0
+}
+
+# Commit poruka iz -m / --message (robusno preko shlex)
+MSG=$(printf '%s' "$CMD" | python -c "
+import sys, shlex
+try:
+    toks = shlex.split(sys.stdin.read())
+except Exception:
+    toks = []
+msg = ''
+for i, t in enumerate(toks):
+    if t in ('-m', '--message') and i + 1 < len(toks):
+        msg = toks[i + 1]; break
+    if t.startswith('-m') and len(t) > 2:
+        msg = t[2:]; break
+    if t.startswith('--message='):
+        msg = t[len('--message='):]; break
+print(msg)
+" 2>/dev/null)
+
+# Tip je u PRVOM retku (conventional header).
+HEADER=$(printf '%s' "$MSG" | head -1)
+TYPE=$(printf '%s' "$HEADER" | sed -n 's/^\([a-zA-Z]\+\).*/\1/p' | tr 'A-Z' 'a-z')
+
+# Breaking: "tip!:" / "tip(scope)!:" u headeru ili "BREAKING CHANGE" bilo gdje
+BREAKING=0
+printf '%s' "$HEADER" | grep -qE '^[a-zA-Z]+(\([^)]*\))?!:' && BREAKING=1
+printf '%s' "$MSG" | grep -q 'BREAKING CHANGE' && BREAKING=1
+
+# Je li version linija stvarno promijenjena u version fileu
+BUMPED=0
+git diff --cached -U0 -- package.json 2>/dev/null | grep -qE '^\+[[:space:]]*"version"' && BUMPED=1
+
+if [ "$BREAKING" = "1" ] && [ "$BUMPED" != "1" ]; then
+    deny "Breaking promjena (!: / BREAKING CHANGE) a verzija nije podignuta. Bumpaj major u package.json."
 fi
+
+case "$TYPE" in
+    feat|fix|perf)
+        [ "$BUMPED" = "1" ] || deny "Tip '$TYPE' mijenja ponasanje a verzija nije podignuta. Bumpaj package.json (feat -> minor, fix/perf -> patch)."
+        ;;
+    docs|chore|style|refactor|test|ci|build|revert)
+        : # bez bumpa OK
+        ;;
+    *)
+        deny "Diras app source ali namjera nije deklarirana. Dodaj conventional prefiks u commit poruku (feat/fix/docs/chore/refactor...) da guard moze odluciti treba li bump."
+        ;;
+esac
+
+exit 0
